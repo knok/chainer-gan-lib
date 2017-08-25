@@ -21,7 +21,7 @@ class Color128x128Dataset(chainer.dataset.DatasetMixin):
     def __len__(self):
         return len(self.filenames)
 
-    def get_exmaple(self, i):
+    def get_example(self, i):
         if i > len(self):
             raise IndexError('index is too large')
         fname = self.filenames[i]
