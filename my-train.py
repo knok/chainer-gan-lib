@@ -57,7 +57,8 @@ def main():
     #from c128gan import Updater
     generator = common.net.C128Generator()
     discriminator = common.net.SND128Discriminator()
-    import sys; sys.exit(0)
+    models = [generator, discriminator]
+    from dcgan.updater import Updater
 
     if args.gpu >= 0:
         chainer.cuda.get_device_from_id(args.gpu).use()
