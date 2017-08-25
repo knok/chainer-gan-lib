@@ -37,7 +37,7 @@ class NPZColorDataset(chainer.dataset.DatasetMixin):
         self.height = 128
 
         if npz is not None:
-            self.images = np.load(npz)
+            self.images = np.load(npz)['arr_0']
             self.npz_fname = npz
         else:
             if data_dir is None:
@@ -54,7 +54,7 @@ class NPZColorDataset(chainer.dataset.DatasetMixin):
                 self.images = np.asarray(images)
 
     def __len__(self):
-        return len(self.images)
+        return self.images.shape[0]
 
     def get_example(self, i):
         if i > len(self):
