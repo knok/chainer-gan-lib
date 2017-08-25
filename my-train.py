@@ -20,8 +20,6 @@ def make_optimizer(model, alpha, beta1, beta2):
 
 def main():
     parser = argparse.ArgumentParser(description='Train script')
-    parser.add_argument('--algorithm', '-a', type=str, default="dcgan", help='GAN algorithm')
-    parser.add_argument('--architecture', type=str, default="dcgan", help='Network architecture')
     parser.add_argument('--batchsize', type=int, default=64)
     parser.add_argument('--max_iter', type=int, default=100000)
     parser.add_argument('--gpu', '-g', type=int, default=0, help='GPU ID (negative value indicates CPU)')
@@ -29,12 +27,12 @@ def main():
     parser.add_argument('--snapshot_interval', type=int, default=10000, help='Interval of snapshot')
     parser.add_argument('--evaluation_interval', type=int, default=10000, help='Interval of evaluation')
     parser.add_argument('--display_interval', type=int, default=100, help='Interval of displaying log to console')
-    parser.add_argument('--n_dis', type=int, default=5, help='number of discriminator update per generator update')
+    parser.add_argument('--n_dis', type=int, default=1, help='number of discriminator update per generator update') # 5
     parser.add_argument('--gamma', type=float, default=0.5, help='hyperparameter gamma')
     parser.add_argument('--lam', type=float, default=10, help='gradient penalty')
     parser.add_argument('--adam_alpha', type=float, default=0.0002, help='alpha in Adam optimizer')
-    parser.add_argument('--adam_beta1', type=float, default=0.0, help='beta1 in Adam optimizer')
-    parser.add_argument('--adam_beta2', type=float, default=0.9, help='beta2 in Adam optimizer')
+    parser.add_argument('--adam_beta1', type=float, default=0.5, help='beta1 in Adam optimizer') # 0.0
+    parser.add_argument('--adam_beta2', type=float, default=0.999, help='beta2 in Adam optimizer') # 0.9
     parser.add_argument('--output_dim', type=int, default=256, help='output dimension of the discriminator (for cramer GAN)')
     parser.add_argument('--data-dir', type=str, default="")
 
