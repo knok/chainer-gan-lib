@@ -38,7 +38,7 @@ def main():
 
     args = parser.parse_args()
     record_setting(args.out)
-    report_keys = ["loss_dis", "loss_gen", "FID"]
+    report_keys = ["loss_dis", "loss_gen"]
 
     # Set up dataset
     from c128dcgan.dataset import Color128x128Dataset
@@ -87,8 +87,6 @@ def main():
     trainer.extend(sample_generate(generator, args.out), trigger=(args.evaluation_interval, 'iteration'),
                    priority=extension.PRIORITY_WRITER)
     trainer.extend(sample_generate_light(generator, args.out), trigger=(args.evaluation_interval // 10, 'iteration'),
-                   priority=extension.PRIORITY_WRITER)
-    trainer.extend(calc_FID(generator), trigger=(args.evaluation_interval, 'iteration'),
                    priority=extension.PRIORITY_WRITER)
     trainer.extend(extensions.ProgressBar(update_interval=10))
 
