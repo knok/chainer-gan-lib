@@ -32,9 +32,10 @@ def main():
     parser.add_argument('--lam', type=float, default=10, help='gradient penalty')
     parser.add_argument('--adam_alpha', type=float, default=0.0002, help='alpha in Adam optimizer')
     parser.add_argument('--adam_beta1', type=float, default=0.5, help='beta1 in Adam optimizer') # 0.0
-    parser.add_argument('--adam_beta2', type=float, default=0.999, help='beta2 in Adam optimizer') # 0.9
+    parser.add_argument('--adam_beta2', type=float, default=0.9, help='beta2 in Adam optimizer') # 0.9
     parser.add_argument('--output_dim', type=int, default=256, help='output dimension of the discriminator (for cramer GAN)')
     parser.add_argument('--data-dir', type=str, default="")
+    parser.add_argument('--n-hidden', type=int, default=128)
 
     args = parser.parse_args()
     record_setting(args.out)
@@ -55,7 +56,7 @@ def main():
 
     # fixed algorithm
     #from c128gan import Updater
-    generator = common.net.C128Generator()
+    generator = common.net.C128Generator(n_hidden=args.n_hidden)
     discriminator = common.net.SND128Discriminator()
     models = [generator, discriminator]
     from dcgan.updater import Updater
