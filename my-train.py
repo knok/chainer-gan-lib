@@ -9,7 +9,7 @@ from chainer.training import extensions
 
 sys.path.append(os.path.dirname(__file__))
 
-from common.evaluation import sample_generate, sample_generate_light, calc_inception, calc_FID
+from common.evaluation import sample_generate, sample_generate_light
 from common.record import record_setting
 import common.net
 
@@ -38,7 +38,7 @@ def main():
 
     args = parser.parse_args()
     record_setting(args.out)
-    report_keys = ["loss_dis", "loss_gen", "inception_mean", "inception_std", "FID"]
+    report_keys = ["loss_dis", "loss_gen", "FID"]
 
     # Set up dataset
     from c128dcgan.dataset import Color128x128Dataset
@@ -87,8 +87,6 @@ def main():
     trainer.extend(sample_generate(generator, args.out), trigger=(args.evaluation_interval, 'iteration'),
                    priority=extension.PRIORITY_WRITER)
     trainer.extend(sample_generate_light(generator, args.out), trigger=(args.evaluation_interval // 10, 'iteration'),
-                   priority=extension.PRIORITY_WRITER)
-    trainer.extend(calc_inception(generator), trigger=(args.evaluation_interval, 'iteration'),
                    priority=extension.PRIORITY_WRITER)
     trainer.extend(calc_FID(generator), trigger=(args.evaluation_interval, 'iteration'),
                    priority=extension.PRIORITY_WRITER)
