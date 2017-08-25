@@ -25,5 +25,7 @@ class Color128x128Dataset(chainer.dataset.DatasetMixin):
         if i > len(self):
             raise IndexError('index is too large')
         fname = self.filenames[i]
-        img = read_image(fname, color=True)
+        img = np.asarray(read_image(fname, color=True), dtype=np.float32)
+        img -= 128
+        img /= 128
         return img
