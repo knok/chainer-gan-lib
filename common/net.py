@@ -446,8 +446,8 @@ class C128Generator(chainer.Chain):
             h = self.hidden_activation(self.bn1(self.dc1(h)))
             h = self.hidden_activation(self.bn2(self.dc2(h)))
             h = self.hidden_activation(self.bn3(self.dc3(h)))
-            h = self.hidden_activation(self.bn3(self.dc4(h)))
-            h = self.hidden_activation(self.bn3(self.dc5(h)))
+            h = self.hidden_activation(self.bn4(self.dc4(h)))
+            h = self.hidden_activation(self.bn5(self.dc5(h)))
             x = self.output_activation(self.dc6(h))
         return x
 
