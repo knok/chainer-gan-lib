@@ -35,6 +35,7 @@ def main():
     parser.add_argument('--adam_beta2', type=float, default=0.9, help='beta2 in Adam optimizer') # 0.9
     parser.add_argument('--output_dim', type=int, default=256, help='output dimension of the discriminator (for cramer GAN)')
     parser.add_argument('--data-dir', type=str, default="")
+    parser.add_argument('--image-npz', type=str, default="")
     parser.add_argument('--n-hidden', type=int, default=128)
 
     args = parser.parse_args()
@@ -42,8 +43,12 @@ def main():
     report_keys = ["loss_dis", "loss_gen"]
 
     # Set up dataset
-    from c128dcgan.dataset import Color128x128Dataset
-    train_dataset = Color128x128Dataset(args.data_dir)
+    if args.image_npz != '':
+        from c128dcgan.dataset import NPZColorDataset
+        train_dataset = NPZColorDataset(npz=args.image_npz)
+    elif args.data_dir != '':
+        from c128dcgan.dataset import Color128x128Dataset
+        train_dataset = Color128x128Dataset(args.data_dir)
     train_iter = chainer.iterators.SerialIterator(train_dataset, args.batchsize)
 
     # Setup algorithm specific networks and updaters
