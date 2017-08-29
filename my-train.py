@@ -37,6 +37,9 @@ def main():
     parser.add_argument('--data-dir', type=str, default="")
     parser.add_argument('--image-npz', type=str, default="")
     parser.add_argument('--n-hidden', type=int, default=128)
+    parser.add_argument('--resume', type=str, default="")
+    parser.add_argument('--ch', type=int, default=512)
+    parser.add_argument('--snapshot-iter', type=int, default=0)
 
     args = parser.parse_args()
     record_setting(args.out)
@@ -61,8 +64,8 @@ def main():
 
     # fixed algorithm
     #from c128gan import Updater
-    generator = common.net.C128Generator(n_hidden=args.n_hidden)
-    discriminator = common.net.SND128Discriminator()
+    generator = common.net.C128Generator(ch=args.ch, n_hidden=args.n_hidden)
+    discriminator = common.net.SND128Discriminator(ch=args.ch)
     models = [generator, discriminator]
     from dcgan.updater import Updater
 
@@ -95,6 +98,15 @@ def main():
     trainer.extend(sample_generate_light(generator, args.out), trigger=(args.evaluation_interval // 10, 'iteration'),
                    priority=extension.PRIORITY_WRITER)
     trainer.extend(extensions.ProgressBar(update_interval=10))
+    if args.snapshot_iter == 0:
+        snap_iter= args.max_iter // 100
+    else:
+        snap_iter = args.snapshot_iter
+    trainer.extend(extensions.snapshot(), trigger=(snap_iter , 'iteration'))
+
+    # resume
+    if args.resume != "":
+        chainer.serializers.load_npz(args.resume, trainer)
 
     # Run the training
     trainer.run()
