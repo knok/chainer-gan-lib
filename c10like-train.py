@@ -51,11 +51,11 @@ def main():
     # Set up dataset
     #train_dataset = Cifar10Dataset()
     if args.image_npz != '':
-        from c128dcgan.dataset import NPZColorDataset
+        from dataset.cifar10like import NPZColorDataset
         train_dataset = NPZColorDataset(npz=args.image_npz)
     elif args.data_dir != '':
-        from c128dcgan.dataset import Color128x128Dataset
-        train_dataset = Color128x128Dataset(args.data_dir)
+        from dataset.cifar10like import CIFAR10Like
+        train_dataset = CIFAR10Like(args.data_dir)
     train_iter = chainer.iterators.SerialIterator(train_dataset, args.batchsize)
 
     # Setup algorithm specific networks and updaters
