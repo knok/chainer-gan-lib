@@ -133,6 +133,18 @@ def main():
         updater_args["n_dis"] = args.n_dis
         updater_args["lam"] = args.lam
 
+    elif args.algorithm == "my_cramer":
+        from cramer.my_updater import Updater
+        if args.architecture=="dcgan":
+            generator = common.net.DCGANGenerator()
+            discriminator = common.net.WGANDiscriminator(output_dim=args.output_dim)
+        else:
+            raise NotImplementedError()
+        models = [generator, discriminator]
+        report_keys.append("loss_gp")
+        updater_args["n_dis"] = args.n_dis
+        updater_args["lam"] = args.lam
+    
     elif args.algorithm == "dragan":
         from dragan.updater import Updater
         if args.architecture=="dcgan":
