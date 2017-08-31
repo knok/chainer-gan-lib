@@ -482,3 +482,56 @@ class SND128Discriminator(chainer.Chain):
         h = F.leaky_relu(self.c4_1(h))
         h = F.leaky_relu(self.c5_0(h))
         return self.l6(h)
+
+class LimDCGANGenerator(chainer.Chain):
+    def __init__(self, n_hidden=128, bottom_width=4, ch=512, wscale=0.02,
+                 z_distribution="uniform", hidden_activation=F.relu, output_activation=F.tanh, use_bn=True):
+        super(LimDCGANGenerator, self).__init__()
+        self.n_hidden = n_hidden
+        self.ch = ch
+        self.bottom_width = bottom_width
+        self.z_distribution = z_distribution
+        self.hidden_activation = hidden_activation
+        self.output_activation = output_activation
+        self.use_bn = use_bn
+
+        with self.init_scope():
+            w = chainer.initializers.Normal(wscale)
+            self.l0 = L.Linear(self.n_hidden, bottom_width * bottom_width * ch,
+                               initialW=w)
+            self.dc1 = L.Deconvolution2D(ch, ch // 2, 4, 2, 1, initialW=w)
+            self.dc2 = L.Deconvolution2D(ch // 2, ch // 4, 4, 2, 1, initialW=w)
+            self.dc3 = L.Deconvolution2D(ch // 4, ch // 8, 4, 2, 1, initialW=w)
+            self.dc4 = L.Deconvolution2D(ch // 8, 3, 3, 1, 1, initialW=w)
+            if self.use_bn:
+                self.bn0 = L.BatchNormalization(bottom_width * bottom_width * ch)
+                self.bn1 = L.BatchNormalization(ch // 2)
+                self.bn2 = L.BatchNormalization(ch // 4)
+                self.bn3 = L.BatchNormalization(ch // 8)
+
+    def make_hidden(self, batchsize):
+        if self.z_distribution == "normal":
+            return np.random.randn(batchsize, self.n_hidden, 1, 1) \
+                .astype(np.float32)
+        elif self.z_distribution == "uniform":
+            return np.random.uniform(-0.5, 0.5, (batchsize, self.n_hidden, 1, 1)) \
+                .astype(np.float32)
+        else:
+            raise Exception("unknown z distribution: %s" % self.z_distribution)
+
+    def __call__(self, z):
+        if not self.use_bn:
+            h = F.reshape(self.hidden_activation(self.l0(z)),
+                          (len(z), self.ch, self.bottom_width, self.bottom_width))
+            h = self.hidden_activation(self.dc1(h))
+            h = self.hidden_activation(self.dc2(h))
+            h = self.hidden_activation(self.dc3(h))
+            x = self.output_activation(self.dc4(h))
+        else:
+            h = F.reshape(self.hidden_activation(self.bn0(self.l0(z))),
+                          (len(z), self.ch, self.bottom_width, self.bottom_width))
+            h = self.hidden_activation(self.bn1(self.dc1(h)))
+            h = self.hidden_activation(self.bn2(self.dc2(h)))
+            h = self.hidden_activation(self.bn3(self.dc3(h)))
+            x = self.output_activation(self.dc4(h))
+        return x
