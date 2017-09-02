@@ -485,7 +485,7 @@ class SND128Discriminator(chainer.Chain):
 
 class LimDCGANGenerator(chainer.Chain):
     def __init__(self, n_hidden=128, bottom_width=4, ch=512, wscale=0.02,
-                 z_distribution="uniform", hidden_activation=F.relu, output_activation=F.tanh, use_bn=True):
+                 z_distribution="uniform", hidden_activation=F.relu, output_activation=F.tanh, use_bn=True, range=0.5):
         super(LimDCGANGenerator, self).__init__()
         self.n_hidden = n_hidden
         self.ch = ch
@@ -494,6 +494,7 @@ class LimDCGANGenerator(chainer.Chain):
         self.hidden_activation = hidden_activation
         self.output_activation = output_activation
         self.use_bn = use_bn
+        self.range = range
 
         with self.init_scope():
             w = chainer.initializers.Normal(wscale)
@@ -514,7 +515,7 @@ class LimDCGANGenerator(chainer.Chain):
             return np.random.randn(batchsize, self.n_hidden, 1, 1) \
                 .astype(np.float32)
         elif self.z_distribution == "uniform":
-            return np.random.uniform(-0.5, 0.5, (batchsize, self.n_hidden, 1, 1)) \
+            return np.random.uniform(-self.range, self.range, (batchsize, self.n_hidden, 1, 1)) \
                 .astype(np.float32)
         else:
             raise Exception("unknown z distribution: %s" % self.z_distribution)

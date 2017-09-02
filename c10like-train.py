@@ -43,6 +43,7 @@ def main():
     parser.add_argument('--resume', type=str, default="")
     parser.add_argument('--ch', type=int, default=512)
     parser.add_argument('--snapshot-iter', type=int, default=0)
+    parser.add_argument('--range', type=float, default=1.0)
 
     args = parser.parse_args()
     record_setting(args.out)
@@ -146,9 +147,10 @@ def main():
         updater_args["lam"] = args.lam
 
     elif args.algorithm == "lim_cramer":
-        from cramer.my_updater import Updater
+        #from cramer.my_updater import Updater
+        from cramer.updater import Updater
         if args.architecture=="dcgan":
-            generator = common.net.LimDCGANGenerator()
+            generator = common.net.LimDCGANGenerator(range=args.range)
             discriminator = common.net.WGANDiscriminator(output_dim=args.output_dim)
         else:
             raise NotImplementedError()
