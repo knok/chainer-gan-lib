@@ -72,6 +72,9 @@ def main():
         if args.architecture=="dcgan":
             generator = common.net.DCGANGenerator()
             discriminator = common.net.DCGANDiscriminator()
+        elif args.architecture=="lim_dcgan":
+            generator = common.net.LimDCGANGenerator(n_hidden=args.n_hidden, range=args.range)
+            discriminator = common.net.WGANDiscriminator(output_dim=args.output_dim)
         else:
             raise NotImplementedError()
         models = [generator, discriminator]
